@@ -16,17 +16,21 @@ public class UserCrudService {
     private UserRepository userRepository;
 
     public void createUserWithDetails(User user) {
-        userRepository.save(user);
-        log.info("New User created!");
+        try {
+            userRepository.save(user);
+            log.info("New User created!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public User getUserById(Long id) {
+    public User getUserDetails(Long id) {
         User user = userRepository.getById(id);
         log.info("Found user by Id: {}", user);
         return user;
     }
 
-    public User getUserByUserName(String userName) {
+    public User getUserDetails(String userName) {
         User user = userRepository.getByUserName(userName);
         log.info("Found user by userName: {}", user);
         return user;
@@ -42,8 +46,14 @@ public class UserCrudService {
         log.info("User data updated.");
     }
 
-    public void deleteUserById(Long id) {
+    public void deleteUser(Long id) {
         userRepository.deleteById(id);
         log.info("Deleted user of Id: {}", id);
+    }
+
+    public void deleteUser(String userName) {
+        User user = getUserDetails(userName);
+        userRepository.deleteById(user.getId());
+        log.info("Deleted user of userName: {}", userName);
     }
 }
