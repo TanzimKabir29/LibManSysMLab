@@ -20,12 +20,9 @@ public class UserCrudController {
 
     @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> createUserWithDetails(@RequestHeader(value = "request-id") String requestId, @RequestBody User user) {
-        MDC.put("request_id", requestId);
-        try {
-            userCrudService.createUserWithDetails(user);
+        if (userCrudService.createUserWithDetails(user)) {
             return new ResponseEntity(HttpStatus.CREATED);
-        } catch (Exception e) {
-            log.error("User could not be created.");
+        } else {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
     }
@@ -36,7 +33,7 @@ public class UserCrudController {
         try {
             User user = userCrudService.getUserDetails(id);
             log.info("Retrieved user : {}", user);
-            if(user != null)
+            if (user != null)
                 return ResponseEntity.ok(user);
             else
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -52,7 +49,7 @@ public class UserCrudController {
         try {
             User user = userCrudService.getUserDetails(userName);
             log.info("Retrieved user : {}", user);
-            if(user != null)
+            if (user != null)
                 return ResponseEntity.ok(user);
             else
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -81,7 +78,6 @@ public class UserCrudController {
             userCrudService.deleteUser(id);
             return new ResponseEntity(HttpStatus.OK);
         } catch (Exception e) {
-            e.printStackTrace();
             log.error("User could not be deleted.");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -94,7 +90,6 @@ public class UserCrudController {
             userCrudService.deleteUser(userName);
             return new ResponseEntity(HttpStatus.OK);
         } catch (Exception e) {
-            e.printStackTrace();
             log.error("User could not be deleted.");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }

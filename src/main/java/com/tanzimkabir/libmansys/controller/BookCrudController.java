@@ -23,11 +23,9 @@ public class BookCrudController {
     @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Book> createBookWithDetails(@RequestHeader(value = "request-id") String requestId, @RequestBody Book book) {
         MDC.put("request_id", requestId);
-        try {
-            bookCrudService.createBookWithDetails(book);
+        if (bookCrudService.createBookWithDetails(book)) {
             return new ResponseEntity(HttpStatus.CREATED);
-        } catch (Exception e) {
-            log.error("Book could not be created.");
+        } else {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
     }
@@ -68,9 +66,9 @@ public class BookCrudController {
     public ResponseEntity<?> getBookByNameAndAuthor(@RequestHeader(value = "request-id") String requestId, @RequestParam(value = "name") String name, @RequestParam(value = "author") String author) {
         MDC.put("request_id", requestId);
         try {
-            ArrayList<Book> book = bookCrudService.getBookDetails(name);
+            Book book = bookCrudService.getBookDetails(name, author);
             log.info("Retrieved Book : {}", book);
-            if (!book.isEmpty())
+            if (book != null)
                 return ResponseEntity.ok(book);
             else
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -97,19 +95,17 @@ public class BookCrudController {
         MDC.put("request_id", requestId);
         if (bookCrudService.deleteBook(id)) {
             return new ResponseEntity(HttpStatus.OK);
-        } else
+        } else {
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping(value = "/deletebyname")
     public ResponseEntity<?> deleteBookByname(@RequestHeader(value = "request-id") String requestId, @RequestParam(value = "name") String name, @RequestParam(value = "author") String author) {
         MDC.put("request_id", requestId);
-        try {
-            bookCrudService.deleteBook(name, author);
+        if (bookCrudService.deleteBook(name, author)) {
             return new ResponseEntity(HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error("Book could not be deleted.");
+        } else {
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
