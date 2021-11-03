@@ -13,7 +13,7 @@ import java.util.LinkedList;
 
 
 @Entity
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "booksList"})
+@JsonIgnoreProperties({"hibernateLazyInitializer","hibernate_lazy_initializer", "handler", "booksList","books_list"})
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
