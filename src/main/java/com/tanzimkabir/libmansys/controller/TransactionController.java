@@ -19,7 +19,7 @@ public class TransactionController {
     private TransactionService transactionService;
 
     @PostMapping(value = "/issue", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> issueBook(@RequestHeader(value = "request-id") String requestId, @RequestBody TransactionRequest transactionRequest){
+    public ResponseEntity<?> issueBook(@RequestHeader(value = "request-id") String requestId, @RequestBody TransactionRequest transactionRequest) {
         MDC.put("request_id", requestId);
         if (transactionService.issueBook(transactionRequest)) {
             return new ResponseEntity(HttpStatus.OK);
@@ -29,7 +29,7 @@ public class TransactionController {
     }
 
     @PostMapping(value = "/submit", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> submitBook(@RequestHeader(value = "request-id") String requestId, @RequestBody TransactionRequest transactionRequest){
+    public ResponseEntity<?> submitBook(@RequestHeader(value = "request-id") String requestId, @RequestBody TransactionRequest transactionRequest) {
         MDC.put("request_id", requestId);
         if (transactionService.submitBook(transactionRequest)) {
             return new ResponseEntity(HttpStatus.OK);

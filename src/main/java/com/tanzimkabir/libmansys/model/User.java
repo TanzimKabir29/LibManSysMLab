@@ -13,13 +13,13 @@ import java.util.LinkedList;
 
 
 @Entity
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "booksList"})
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "lib_user",
         uniqueConstraints = {
-            @UniqueConstraint(columnNames = {"userName"})
+                @UniqueConstraint(columnNames = {"userName"})
         })
 public class User {
 

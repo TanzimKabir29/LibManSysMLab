@@ -20,6 +20,7 @@ public class UserCrudController {
 
     @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> createUserWithDetails(@RequestHeader(value = "request-id") String requestId, @RequestBody User user) {
+        MDC.put("request_id", requestId);
         if (userCrudService.createUserWithDetails(user)) {
             return new ResponseEntity(HttpStatus.CREATED);
         } else {

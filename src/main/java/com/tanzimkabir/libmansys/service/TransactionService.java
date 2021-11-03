@@ -23,24 +23,26 @@ public class TransactionService {
     @Autowired
     private BookRepository bookRepository;
     @Value("${user.book.limit}")
-    private static byte USER_BOOK_LIMIT;
+    private byte USER_BOOK_LIMIT;
 
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public boolean issueBook(TransactionRequest transactionRequest) {
         // Get the user to whom book will be issued
         User user = userRepository.getByUserName(transactionRequest.getUserName());
         if (user == null) {
             log.info("No User found with username: {}", transactionRequest.getUserName());
+            return false;
         }
         // Check if user's book count will exceed limit or not
         if (user.getBookCount() + transactionRequest.getCopies() > USER_BOOK_LIMIT) {
-            log.info("User cannot be issues books. No. of issued books will exceed preset limit: {}", USER_BOOK_LIMIT);
+            log.info("User cannot be issued books. Number of issued books will exceed preset limit: {}", USER_BOOK_LIMIT);
             return false;
         }
         // Get book to be issued
         Book book = bookRepository.getByNameAndAuthor(transactionRequest.getBookName(), transactionRequest.getBookAuthor());
         if (book == null) {
             log.info("No Book found with name: {} and author: {}", transactionRequest.getBookName(), transactionRequest.getBookAuthor());
+            return false;
         }
         // Check if there are enough copies of the book to issue
         if (book.getCopies() < transactionRequest.getCopies()) {
@@ -58,13 +60,19 @@ public class TransactionService {
             // Reduce available books
             book.setCopies(book.getCopies() - transactionRequest.getCopies());
             HashMap<Long, Integer> newUserList = book.getUserList();
-            newUserList.put(user.getId(), transactionRequest.getCopies() + newUserList.getOrDefault(user, 0));
+            if(newUserList == null){
+                newUserList = new HashMap<>();
+            }
+            newUserList.put(user.getId(), transactionRequest.getCopies() + newUserList.getOrDefault(user.getId(), 0));
             book.setUserList(newUserList);
             bookRepository.save(book);
             // Add number of books to user
             user.setBookCount(user.getBookCount() + transactionRequest.getCopies());
             HashMap<Long, Integer> newBooksList = user.getBooksList();
-            newBooksList.put(book.getId(), transactionRequest.getCopies() + newBooksList.getOrDefault(book,0));
+            if(newBooksList == null){
+                newBooksList = new HashMap<>();
+            }
+            newBooksList.put(book.getId(), transactionRequest.getCopies() + newBooksList.getOrDefault(book.getId(),0));
             user.setBooksList(newBooksList);
             userRepository.save(user);
             log.info("Book Id:{} issued to User Id:{}, amount:{}", book.getId(), user.getId(), transactionRequest.getCopies());
@@ -76,24 +84,30 @@ public class TransactionService {
         }
     }
 
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public boolean submitBook(TransactionRequest transactionRequest) {
         // Get the user to whom book will be issued
         User user = userRepository.getByUserName(transactionRequest.getUserName());
         if (user == null) {
             log.info("No User found with username: {}", transactionRequest.getUserName());
+            return false;
         }
         // Get book to be issued
         Book book = bookRepository.getByNameAndAuthor(transactionRequest.getBookName(), transactionRequest.getBookAuthor());
         if (book == null) {
             log.info("No Book found with name: {} and author: {}", transactionRequest.getBookName(), transactionRequest.getBookAuthor());
-        }
-        // Check if user has enough copies of particular book
-        if (transactionRequest.getCopies() > user.getBookCount() || transactionRequest.getCopies() > transactionRepository.specificBookCount(user.getId(), book.getId())) {
-            log.info("User cannot be issues books. No. of issued books will exceed preset limit: {}", USER_BOOK_LIMIT);
             return false;
         }
-        // Set the issuance as a transaction
+        // Check if user has enough copies of particular book
+        HashMap<Long, Integer> newBooksList = user.getBooksList();
+        if(newBooksList == null){
+            newBooksList = new HashMap<>();
+        }
+        if (transactionRequest.getCopies() > newBooksList.getOrDefault(book.getId(),0)) {
+            log.info("User cannot submit books. Number of submitted books exceeds issued: {}", USER_BOOK_LIMIT);
+            return false;
+        }
+        // Set the submitting as a transaction
         try {
             Transaction transaction = new Transaction();
             transaction.setUser(user);
@@ -101,13 +115,20 @@ public class TransactionService {
             transaction.setType(TrnxType.SUBMIT);
             transaction.setSubmittedAmount(transactionRequest.getCopies());
             transactionRepository.save(transaction);
-            // Reduce available books
-            book.setCopies(book.getCopies() - transactionRequest.getCopies());
+            // Increase available books
+            book.setCopies(book.getCopies() + transactionRequest.getCopies());
+            HashMap<Long, Integer> newUserList = book.getUserList();
+            if(newUserList == null){
+                newUserList = new HashMap<>();
+            }
+            newUserList.put(user.getId(), transactionRequest.getCopies() - newUserList.getOrDefault(user.getId(), 0));
+            book.setUserList(newUserList);
             bookRepository.save(book);
-            // Add number of books to user
-            user.setBookCount(user.getBookCount() + transactionRequest.getCopies());
+            // Reduce number of books of user
+            user.setBookCount(user.getBookCount() - transactionRequest.getCopies());
+            newBooksList.put(book.getId(), transactionRequest.getCopies() - newBooksList.getOrDefault(book.getId(),0));
             userRepository.save(user);
-            log.info("Book Id:{} issued to User Id:{}, amount:{}", book.getId(), user.getId(), transactionRequest.getCopies());
+            log.info("Book Id:{} submitted by User Id:{}, amount:{}", book.getId(), user.getId(), transactionRequest.getCopies());
             return true;
         } catch (Exception e) {
             e.printStackTrace();

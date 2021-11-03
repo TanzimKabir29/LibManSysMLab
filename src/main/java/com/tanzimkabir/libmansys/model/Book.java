@@ -12,13 +12,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 @Entity
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "userList"})
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "lib_books",
         uniqueConstraints = {
-            @UniqueConstraint(columnNames = {"name","author"})
+                @UniqueConstraint(columnNames = {"name", "author"})
         })
 public class Book {
 
