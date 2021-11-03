@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -25,7 +26,9 @@ public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @NotBlank(message = "Book name must be provided")
     private String name;
+    @NotBlank(message = "Boot author name must be provided")
     private String author;
     private int copies = 0;
     private HashMap<Long, Integer> userList = null;
