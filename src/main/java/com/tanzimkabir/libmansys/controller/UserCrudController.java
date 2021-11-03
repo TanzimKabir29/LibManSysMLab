@@ -23,7 +23,7 @@ public class UserCrudController {
         if (userCrudService.createUserWithDetails(user)) {
             return new ResponseEntity(HttpStatus.CREATED);
         } else {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

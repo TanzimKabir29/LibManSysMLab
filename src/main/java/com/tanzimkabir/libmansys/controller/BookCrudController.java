@@ -26,7 +26,7 @@ public class BookCrudController {
         if (bookCrudService.createBookWithDetails(book)) {
             return new ResponseEntity(HttpStatus.CREATED);
         } else {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
