@@ -28,7 +28,7 @@ public class UserCrudController {
     private UserCrudService userCrudService;
 
     @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> createUserWithDetails(@RequestHeader(value = "request-id") String requestId, @Valid  @RequestBody User user) {
+    public ResponseEntity<User> createUserWithDetails(@RequestHeader(value = "request-id") String requestId, @Valid @RequestBody User user) {
         MDC.put("request_id", requestId);
         if (userCrudService.createUserWithDetails(user)) {
             return new ResponseEntity(HttpStatus.CREATED);
@@ -47,7 +47,7 @@ public class UserCrudController {
         } catch (EntityNotFoundException enf){
             throw new EntityNotFoundException(enf.getMessage());
         } catch (IllegalArgumentException arg){
-            throw new EntityNotFoundException(arg.getMessage());
+            throw new IllegalArgumentException(arg.getMessage());
         } catch (Exception e) {
             log.error("Could not retrieve user");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -64,8 +64,9 @@ public class UserCrudController {
         } catch (EntityNotFoundException enf){
             throw new EntityNotFoundException(enf.getMessage());
         } catch (IllegalArgumentException arg){
-            throw new EntityNotFoundException(arg.getMessage());
+            throw new IllegalArgumentException(arg.getMessage());
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Could not retrieve user");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -80,7 +81,7 @@ public class UserCrudController {
         } catch (EntityNotFoundException enf){
             throw new EntityNotFoundException(enf.getMessage());
         } catch (IllegalArgumentException arg){
-            throw new EntityNotFoundException(arg.getMessage());
+            throw new IllegalArgumentException(arg.getMessage());
         } catch (Exception e) {
             log.error("User could not be created.");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -96,7 +97,7 @@ public class UserCrudController {
         } catch (EntityNotFoundException enf){
             throw new EntityNotFoundException(enf.getMessage());
         } catch (IllegalArgumentException arg){
-            throw new EntityNotFoundException(arg.getMessage());
+            throw new IllegalArgumentException(arg.getMessage());
         } catch (Exception e) {
             log.error("User could not be deleted.");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -112,7 +113,7 @@ public class UserCrudController {
         } catch (EntityNotFoundException enf){
             throw new EntityNotFoundException(enf.getMessage());
         } catch (IllegalArgumentException arg){
-            throw new EntityNotFoundException(arg.getMessage());
+            throw new IllegalArgumentException(arg.getMessage());
         } catch (Exception e) {
             log.error("User could not be deleted.");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);

@@ -8,6 +8,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 
 /**
@@ -48,7 +49,7 @@ public class UserCrudService {
      */
     public User getUserDetails(Long id) {
         User user = userRepository.getById(id);
-        if(user == null) {
+        if(user.getId() == null) {
             log.error("Could not find user of Id:{}",id);
             throw new EntityNotFoundException("Could not find user of Id " + id);
         }
@@ -81,7 +82,7 @@ public class UserCrudService {
     public void updateUserById(User user) {
         try {
             User updatedUser = userRepository.getById(user.getId());
-            if(updatedUser == null) {
+            if(updatedUser.getId() == null) {
                 log.error("Could not find user of Id:{}",user.getId());
                 throw new EntityNotFoundException("Could not find user of Id " + user.getId());
             }

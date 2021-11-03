@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 
 /**
  * Entity for books. Multiple books may have the same name. So name,author pair is taken as unique constraint.
@@ -38,10 +38,7 @@ public class Book {
     @Size(max = 50)
     @NotBlank(message = "Boot author name must be provided")
     private String author;
-    @Size(max = 50)
-    private int copies = 0;
-    // Stores a map of user Id and number of this book issued to that user
-    private HashMap<Long, Integer> userList = null;
+    private int amount = 0;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss a z", timezone = "GMT+6")
     private LocalDateTime createdDate = LocalDateTime.now();
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss a z", timezone = "GMT+6")

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 /**
@@ -28,5 +29,6 @@ public class TransactionRequest {
     @Size(max = 50)
     @NotBlank(message = "Book author name is mandatory")
     private String bookAuthor;
-    private int copies = 1;
+    private boolean is_issue = true;
+    private int amount = 1;
 }

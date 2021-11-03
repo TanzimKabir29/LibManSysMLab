@@ -10,6 +10,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 /**
  * This class contains endpoints for issuing Books to Users and for Users submitting Books.
  *
@@ -25,7 +27,7 @@ public class TransactionController {
     private TransactionService transactionService;
 
     @PostMapping(value = "/issue", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> issueBook(@RequestHeader(value = "request-id") String requestId, @RequestBody TransactionRequest transactionRequest) {
+    public ResponseEntity<?> issueBook(@RequestHeader(value = "request-id") String requestId, @Valid @RequestBody TransactionRequest transactionRequest) {
         MDC.put("request_id", requestId);
         if (transactionService.issueBook(transactionRequest)) {
             return new ResponseEntity(HttpStatus.OK);
@@ -35,8 +37,9 @@ public class TransactionController {
     }
 
     @PostMapping(value = "/submit", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> submitBook(@RequestHeader(value = "request-id") String requestId, @RequestBody TransactionRequest transactionRequest) {
+    public ResponseEntity<?> submitBook(@RequestHeader(value = "request-id") String requestId, @Valid @RequestBody TransactionRequest transactionRequest) {
         MDC.put("request_id", requestId);
+        transactionRequest.set_issue(false);
         if (transactionService.submitBook(transactionRequest)) {
             return new ResponseEntity(HttpStatus.OK);
         } else {

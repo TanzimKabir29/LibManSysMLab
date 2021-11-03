@@ -5,6 +5,7 @@ import com.tanzimkabir.libmansys.model.BookListEntry;
 import com.tanzimkabir.libmansys.model.User;
 import com.tanzimkabir.libmansys.model.UserListEntry;
 import com.tanzimkabir.libmansys.repository.BookRepository;
+import com.tanzimkabir.libmansys.repository.TransactionRepository;
 import com.tanzimkabir.libmansys.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,8 @@ public class ListingService {
     private BookRepository bookRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private TransactionRepository transactionRepository;
 
     /**
      * Retrieves the user by id, whose book list is to be retrieved. Meant for code reusability.
@@ -38,7 +41,7 @@ public class ListingService {
      */
     public ArrayList<BookListEntry> getBooksByUserId(Long id) {
         User user = userRepository.getById(id);
-        if (user == null) {
+        if (user.getId() == null) {
             log.info("User with id: {} not found", id);
             return null;
         }
@@ -68,25 +71,26 @@ public class ListingService {
      * @return list of books as array of {@link BookListEntry}
      */
     private ArrayList<BookListEntry> getBookList(User user){
-        HashMap<Long, Integer> userBooks = user.getBooksList();
-        if (userBooks == null){
+        ArrayList<Object[]> userBooks = transactionRepository.getBooksAndCountByUser(user);
+        if (userBooks.isEmpty()){
             log.info("User has no books issued.");
-            return null;
+            throw new EntityNotFoundException("User has no books issued.");
         }
         ArrayList<BookListEntry> bookList = new ArrayList<>();
         // Iterating over userBooks to create ArrayList with sufficient data
-        for(Long i: userBooks.keySet()){
-            Book book = bookRepository.getById(i);
+        for(Object[] i: userBooks){
+            Book book = bookRepository.getById(Long.parseLong(i[0].toString()));
             //Using BookListEntry model to pass only necessary data
             bookList.add(
                     BookListEntry.builder()
                             .id(book.getId())
                             .name(book.getName())
                             .author(book.getAuthor())
-                            .copies(userBooks.get(i))
+                            .copies(Integer.parseInt(i[1].toString()))
                             .build()
             );
         }
+        bookList.trimToSize();
         if(bookList.isEmpty()){
             log.info("No books found for user.");
             throw new EntityNotFoundException("No books found for user: "+ user);
@@ -104,7 +108,7 @@ public class ListingService {
      */
     public ArrayList<UserListEntry> getUsersByBookId(Long id) {
         Book book = bookRepository.getById(id);
-        if (book == null) {
+        if (book.getName() == null) {
             log.info("Book with id: {} not found", id);
             return null;
         }
@@ -135,15 +139,15 @@ public class ListingService {
      * @return list of users as array of {@link UserListEntry}
      */
     private ArrayList<UserListEntry> getUserList(Book book){
-        HashMap<Long, Integer> bookUsers = book.getUserList();
-        if (bookUsers == null){
+        ArrayList<Object[]> bookUsers = transactionRepository.getUsersAndCountByBook(book);
+        if (bookUsers.isEmpty()){
             log.info("Book not issued to any users.");
-            return null;
+            throw new EntityNotFoundException("Book not issued to any users.");
         }
         // Iterating over bookUsers to create ArrayList with sufficient data
         ArrayList<UserListEntry> userList = new ArrayList<>();
-        for(Long i: bookUsers.keySet()){
-            User user = userRepository.getById(i);
+        for(Object[] i: bookUsers){
+            User user = userRepository.getById(Long.parseLong(i[0].toString()));
             //Using UserListEntry model to pass only necessary data
             userList.add(
                     UserListEntry.builder()
@@ -151,10 +155,11 @@ public class ListingService {
                             .userName(user.getUserName())
                             .firstName(user.getFirstName())
                             .lastName(user.getLastName())
-                            .copies(bookUsers.get(i))
+                            .copies(Integer.parseInt(i[1].toString()))
                             .build()
             );
         }
+        userList.trimToSize();
         if(userList.isEmpty()){
             log.info("No users found for book.");
             throw new EntityNotFoundException("No users found for book: "+ book);

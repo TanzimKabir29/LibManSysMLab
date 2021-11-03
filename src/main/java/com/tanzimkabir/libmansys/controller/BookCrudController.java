@@ -48,7 +48,7 @@ public class BookCrudController {
         } catch (EntityNotFoundException enf){
             throw new EntityNotFoundException(enf.getMessage());
         } catch (IllegalArgumentException arg){
-            throw new EntityNotFoundException(arg.getMessage());
+            throw new IllegalArgumentException(arg.getMessage());
         } catch (Exception e) {
             log.error("Could not retrieve Book");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -65,7 +65,7 @@ public class BookCrudController {
         } catch (EntityNotFoundException enf){
             throw new EntityNotFoundException(enf.getMessage());
         } catch (IllegalArgumentException arg){
-            throw new EntityNotFoundException(arg.getMessage());
+            throw new IllegalArgumentException(arg.getMessage());
         } catch (Exception e) {
             log.error("Could not retrieve Book");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -82,7 +82,7 @@ public class BookCrudController {
         } catch (EntityNotFoundException enf){
             throw new EntityNotFoundException(enf.getMessage());
         } catch (IllegalArgumentException arg){
-            throw new EntityNotFoundException(arg.getMessage());
+            throw new IllegalArgumentException(arg.getMessage());
         } catch (Exception e) {
             log.error("Could not retrieve Book");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -99,7 +99,7 @@ public class BookCrudController {
         } catch (EntityNotFoundException enf){
             throw new EntityNotFoundException(enf.getMessage());
         } catch (IllegalArgumentException arg){
-            throw new EntityNotFoundException(arg.getMessage());
+            throw new IllegalArgumentException(arg.getMessage());
         } catch (Exception e) {
             log.error("Could not retrieve Book");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -115,7 +115,7 @@ public class BookCrudController {
         } catch (EntityNotFoundException enf){
             throw new EntityNotFoundException(enf.getMessage());
         } catch (IllegalArgumentException arg){
-            throw new EntityNotFoundException(arg.getMessage());
+            throw new IllegalArgumentException(arg.getMessage());
         } catch (Exception e) {
             log.error("Book could not be created.");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -131,7 +131,7 @@ public class BookCrudController {
         } catch (EntityNotFoundException enf){
             throw new EntityNotFoundException(enf.getMessage());
         } catch (IllegalArgumentException arg){
-            throw new EntityNotFoundException(arg.getMessage());
+            throw new IllegalArgumentException(arg.getMessage());
         } catch (Exception e) {
             log.error("Book could not be deleted.");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -147,7 +147,7 @@ public class BookCrudController {
         } catch (EntityNotFoundException enf){
             throw new EntityNotFoundException(enf.getMessage());
         } catch (IllegalArgumentException arg){
-            throw new EntityNotFoundException(arg.getMessage());
+            throw new IllegalArgumentException(arg.getMessage());
         } catch (Exception e) {
             log.error("Book could not be deleted.");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);

@@ -1,10 +1,14 @@
 package com.tanzimkabir.libmansys.exception;
 
 import com.tanzimkabir.libmansys.model.ErrorHandlerModel;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.persistence.EntityNotFoundException;
@@ -23,7 +27,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
      * Handles error thrown when no data is found against the request parameters.
      */
     @ExceptionHandler(EntityNotFoundException.class)
-    private ResponseEntity<ErrorHandlerModel>  handleDataNotFound(EntityNotFoundException e){
+    public ResponseEntity<ErrorHandlerModel>  handleDataNotFound(EntityNotFoundException e){
         ErrorHandlerModel errorHandlerModel = new ErrorHandlerModel(HttpStatus.NOT_FOUND, LocalDateTime.now(), "Data not found against provided params.", e.getMessage());
         return new ResponseEntity<>(errorHandlerModel,HttpStatus.NOT_FOUND);
     }
@@ -32,8 +36,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
      * Handles error thrown when request data is not properly formatted for processing
      */
     @ExceptionHandler(IllegalArgumentException.class)
-    private ResponseEntity<ErrorHandlerModel>  handleBadRequest(IllegalArgumentException e){
+    public ResponseEntity<ErrorHandlerModel>  handleBadRequest(IllegalArgumentException e){
         ErrorHandlerModel errorHandlerModel = new ErrorHandlerModel(HttpStatus.BAD_REQUEST, LocalDateTime.now(), "Provided data is not formatted correctly", e.getMessage());
+        return new ResponseEntity<>(errorHandlerModel,HttpStatus.BAD_REQUEST);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        ErrorHandlerModel errorHandlerModel = new ErrorHandlerModel(HttpStatus.BAD_REQUEST, LocalDateTime.now(), "Provided data is not formatted correctly", ex.getMessage());
         return new ResponseEntity<>(errorHandlerModel,HttpStatus.BAD_REQUEST);
     }
 

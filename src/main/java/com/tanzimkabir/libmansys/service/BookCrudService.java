@@ -8,6 +8,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -41,7 +42,7 @@ public class BookCrudService {
             }
             else{
                 // Add copies to the existing book since it exists
-                newBook.setCopies(newBook.getCopies() + book.getCopies());
+                newBook.setAmount(newBook.getAmount() + book.getAmount());
                 bookRepository.save(newBook);
                 log.info("Copies added to existing book.");
             }
@@ -60,7 +61,7 @@ public class BookCrudService {
      */
     public Book getBookDetails(Long id) {
         Book book = bookRepository.getById(id);
-        if(book == null) {
+        if(book.getName() == null) {
             log.error("Could not find book of Id:{}",id);
             throw new EntityNotFoundException("Could not find book of Id " + id);
         }
@@ -126,19 +127,21 @@ public class BookCrudService {
     public void updateBookById(Book book) {
         try{
             Book updatedBook = bookRepository.getById(book.getId());
-            if(updatedBook == null) {
+            if(updatedBook.getName() == null) {
                 log.error("Could not find book of Id:{}",book.getId());
                 throw new EntityNotFoundException("Could not find book of Id " + book.getId());
             }
             updatedBook.setName(book.getName());
             updatedBook.setAuthor(book.getAuthor());
-            updatedBook.setCopies(book.getCopies());
+            updatedBook.setAmount(book.getAmount());
             updatedBook.setUpdatedDate(LocalDateTime.now());
             bookRepository.save(updatedBook);
             log.info("Book data updated.");
-        } catch (EmptyResultDataAccessException noData){
+        } catch (EntityNotFoundException noData){
             log.info("Data with id {} not found.", book.getId());
+            throw new EntityNotFoundException(noData.getMessage());
         } catch (Exception e){
+            e.printStackTrace();
             log.info("Book data could not be updated.");
         }
     }

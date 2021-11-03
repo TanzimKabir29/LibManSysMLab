@@ -19,21 +19,24 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "bookIssuance")
+@Table(name = "issued_books",
+        uniqueConstraints = {
+            @UniqueConstraint(columnNames = {"user_id", "book_id"})
+        })
 public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @OneToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "user_id")
     private User user;
     @OneToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "bookId")
+    @JoinColumn(name = "book_id")
     private Book book;
-    private TrnxType type;
-    private int issuedAmount = 0;
-    private int submittedAmount = 0;
+    private int amount = 0;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss a z", timezone = "GMT+6")
     private LocalDateTime createdDate = LocalDateTime.now();
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss a z", timezone = "GMT+6")
+    private LocalDateTime updatedDate;
 }
