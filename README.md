@@ -68,7 +68,7 @@ Users can have a maximum number of books preset by the application. This value c
       ```
       Method = POST
       Url: /book/create
-      Requestbody json fields: user_name(String), first_name(String), last_name(String)
+      Requestbody json fields: name(String), author(String), amount(int)
       ```
    2) Get book data
       ```
@@ -81,6 +81,10 @@ Users can have a maximum number of books preset by the application. This value c
       Param: {1} -> name
       OR
       Method = GET
+      Url: /book/getbyauthor?author={1}
+      Param: {1} -> author
+      OR
+      Method = GET
       Url: /book/getbynameandauthor?name={1}&author={2}
       Param: {1} -> name, {2} -> author
       ```
@@ -88,7 +92,7 @@ Users can have a maximum number of books preset by the application. This value c
       ```
       Method = PUT
       Url: /book/edit
-      Requestbody json fields: id(Long), user_name(String), first_name(String), last_name(String)
+      Requestbody json fields: id(Long), name(String), author(String), amount(int)
       ```
    4) Delete book data
       ```
@@ -97,21 +101,21 @@ Users can have a maximum number of books preset by the application. This value c
       Param: {1} -> id
       OR
       Method = DELETE
-      Url: /book/deletebyusername?username={1}
-      Param: {1} -> username
+      Url: /book/deletebyname?name={1}&author={2}
+      Param: {1} -> name, {2} -> author
       ```
 3) Book issue/submit.
    1) Issue book to user
       ```
       Method = POST
       Url: /transaction/issue
-      Requestbody json fields: user_name(String), book_name(String), book_author(String), copies(int)
+      Requestbody json fields: user_name(String), book_name(String), book_author(String), amount(int)
       ```
    2) User submits book
       ```
       Method = POST
       Url: /transaction/submit
-      Requestbody json fields: user_name(String), book_name(String), book_author(String), copies(int)
+      Requestbody json fields: user_name(String), book_name(String), book_author(String), amount(int)
       ```
 4) Lists against user/book
    1) Get books issued to user
