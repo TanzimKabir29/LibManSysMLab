@@ -39,7 +39,7 @@ public class ListingController {
     }
 
     @GetMapping(value = "/booksbyusername", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getBookListByUserName(@RequestHeader(value = "request-id") String requestId, @RequestParam(value = "id") String userName){
+    public ResponseEntity<?> getBookListByUserName(@RequestHeader(value = "request-id") String requestId, @RequestParam(value = "username") String userName){
         MDC.put("request_id", requestId);
         try {
             ArrayList<BookListEntry> books = listingService.getBooksByUserName(userName);

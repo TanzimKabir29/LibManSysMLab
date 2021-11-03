@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 
 @Slf4j
@@ -37,6 +38,10 @@ public class BookCrudController {
             Book Book = bookCrudService.getBookDetails(id);
             log.info("Retrieved Book : {}", Book);
             return ResponseEntity.ok(Book);
+        } catch (EntityNotFoundException enf){
+            throw new EntityNotFoundException(enf.getMessage());
+        } catch (IllegalArgumentException arg){
+            throw new EntityNotFoundException(arg.getMessage());
         } catch (Exception e) {
             log.error("Could not retrieve Book");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -47,9 +52,30 @@ public class BookCrudController {
     public ResponseEntity<?> getBookByName(@RequestHeader(value = "request-id") String requestId, @RequestParam(value = "name") String name) {
         MDC.put("request_id", requestId);
         try {
-            ArrayList<Book> book = bookCrudService.getBookDetails(name);
+            ArrayList<Book> book = bookCrudService.getBookDetailsbyName(name);
             log.info("Retrieved Book : {}", book);
             return ResponseEntity.ok(book);
+        } catch (EntityNotFoundException enf){
+            throw new EntityNotFoundException(enf.getMessage());
+        } catch (IllegalArgumentException arg){
+            throw new EntityNotFoundException(arg.getMessage());
+        } catch (Exception e) {
+            log.error("Could not retrieve Book");
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/getbyauthor", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getBookByAuthor(@RequestHeader(value = "request-id") String requestId, @RequestParam(value = "author") String author) {
+        MDC.put("request_id", requestId);
+        try {
+            ArrayList<Book> book = bookCrudService.getBookDetailsbyAuthor(author);
+            log.info("Retrieved Book : {}", book);
+            return ResponseEntity.ok(book);
+        } catch (EntityNotFoundException enf){
+            throw new EntityNotFoundException(enf.getMessage());
+        } catch (IllegalArgumentException arg){
+            throw new EntityNotFoundException(arg.getMessage());
         } catch (Exception e) {
             log.error("Could not retrieve Book");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -63,6 +89,10 @@ public class BookCrudController {
             Book book = bookCrudService.getBookDetails(name, author);
             log.info("Retrieved Book : {}", book);
             return ResponseEntity.ok(book);
+        } catch (EntityNotFoundException enf){
+            throw new EntityNotFoundException(enf.getMessage());
+        } catch (IllegalArgumentException arg){
+            throw new EntityNotFoundException(arg.getMessage());
         } catch (Exception e) {
             log.error("Could not retrieve Book");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -75,6 +105,10 @@ public class BookCrudController {
         try {
             bookCrudService.updateBookById(book);
             return new ResponseEntity(HttpStatus.CREATED);
+        } catch (EntityNotFoundException enf){
+            throw new EntityNotFoundException(enf.getMessage());
+        } catch (IllegalArgumentException arg){
+            throw new EntityNotFoundException(arg.getMessage());
         } catch (Exception e) {
             log.error("Book could not be created.");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -84,9 +118,15 @@ public class BookCrudController {
     @DeleteMapping(value = "/deletebyid")
     public ResponseEntity<?> deleteBookById(@RequestHeader(value = "request-id") String requestId, @RequestParam(value = "id") Long id) {
         MDC.put("request_id", requestId);
-        if (bookCrudService.deleteBook(id)) {
+        try {
+            bookCrudService.deleteBook(id);
             return new ResponseEntity(HttpStatus.OK);
-        } else {
+        } catch (EntityNotFoundException enf){
+            throw new EntityNotFoundException(enf.getMessage());
+        } catch (IllegalArgumentException arg){
+            throw new EntityNotFoundException(arg.getMessage());
+        } catch (Exception e) {
+            log.error("Book could not be deleted.");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -94,9 +134,15 @@ public class BookCrudController {
     @DeleteMapping(value = "/deletebyname")
     public ResponseEntity<?> deleteBookByname(@RequestHeader(value = "request-id") String requestId, @RequestParam(value = "name") String name, @RequestParam(value = "author") String author) {
         MDC.put("request_id", requestId);
-        if (bookCrudService.deleteBook(name, author)) {
+        try {
+            bookCrudService.deleteBook(name,author);
             return new ResponseEntity(HttpStatus.OK);
-        } else {
+        } catch (EntityNotFoundException enf){
+            throw new EntityNotFoundException(enf.getMessage());
+        } catch (IllegalArgumentException arg){
+            throw new EntityNotFoundException(arg.getMessage());
+        } catch (Exception e) {
+            log.error("Book could not be deleted.");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

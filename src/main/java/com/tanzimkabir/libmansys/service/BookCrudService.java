@@ -47,11 +47,21 @@ public class BookCrudService {
         return book;
     }
 
-    public ArrayList<Book> getBookDetails(String name) {
+    public ArrayList<Book> getBookDetailsbyName(String name) {
         ArrayList<Book> books = bookRepository.getByName(name);
         if(books.isEmpty()) {
             log.error("Could not find books of name:{}",name);
             throw new EntityNotFoundException("Could not find books of name " + name);
+        }
+        log.info("Found Book by name: {}", books);
+        return books;
+    }
+
+    public ArrayList<Book> getBookDetailsbyAuthor(String author) {
+        ArrayList<Book> books = bookRepository.getByAuthor(author);
+        if(books.isEmpty()) {
+            log.error("Could not find books of author:{}",author);
+            throw new EntityNotFoundException("Could not find books of author " + author);
         }
         log.info("Found Book by name: {}", books);
         return books;
