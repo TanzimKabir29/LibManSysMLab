@@ -11,6 +11,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
+
+/**
+ * This class contains endpoints for CRUD operations on User entities.
+ *
+ * @author tanzim
+ */
 
 @Slf4j
 @RestController
@@ -21,7 +28,7 @@ public class UserCrudController {
     private UserCrudService userCrudService;
 
     @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> createUserWithDetails(@RequestHeader(value = "request-id") String requestId, @RequestBody User user) {
+    public ResponseEntity<User> createUserWithDetails(@RequestHeader(value = "request-id") String requestId, @Valid  @RequestBody User user) {
         MDC.put("request_id", requestId);
         if (userCrudService.createUserWithDetails(user)) {
             return new ResponseEntity(HttpStatus.CREATED);
@@ -65,7 +72,7 @@ public class UserCrudController {
     }
 
     @PutMapping(value = "/edit")
-    public ResponseEntity<?> updateUserDetails(@RequestHeader(value = "request-id") String requestId, @RequestBody User user) {
+    public ResponseEntity<?> updateUserDetails(@RequestHeader(value = "request-id") String requestId, @Valid @RequestBody User user) {
         MDC.put("request_id", requestId);
         try {
             userCrudService.updateUserById(user);

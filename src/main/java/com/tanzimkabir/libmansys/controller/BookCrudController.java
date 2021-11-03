@@ -11,7 +11,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
 import java.util.ArrayList;
+
+/**
+ * This class contains endpoints for CRUD operations on Book entities.
+ *
+ * @author tanzim
+ */
 
 @Slf4j
 @RestController
@@ -22,7 +29,7 @@ public class BookCrudController {
     private BookCrudService bookCrudService;
 
     @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Book> createBookWithDetails(@RequestHeader(value = "request-id") String requestId, @RequestBody Book book) {
+    public ResponseEntity<Book> createBookWithDetails(@RequestHeader(value = "request-id") String requestId, @Valid @RequestBody Book book) {
         MDC.put("request_id", requestId);
         if (bookCrudService.createBookWithDetails(book)) {
             return new ResponseEntity(HttpStatus.CREATED);
@@ -100,7 +107,7 @@ public class BookCrudController {
     }
 
     @PutMapping(value = "/edit")
-    public ResponseEntity<?> updateBookDetails(@RequestHeader(value = "request-id") String requestId, @RequestBody Book book) {
+    public ResponseEntity<?> updateBookDetails(@RequestHeader(value = "request-id") String requestId, @Valid @RequestBody Book book) {
         MDC.put("request_id", requestId);
         try {
             bookCrudService.updateBookById(book);

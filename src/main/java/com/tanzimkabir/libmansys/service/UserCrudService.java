@@ -10,6 +10,12 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 
+/**
+ * Handles CRUD operations of User entity
+ *
+ * @author tanzim
+ */
+
 @Slf4j
 @Service
 public class UserCrudService {
@@ -17,6 +23,12 @@ public class UserCrudService {
     @Autowired
     private UserRepository userRepository;
 
+    /**
+     * Creates a User entity using provided data.
+     *
+     * @param  user - a User entity that is to be created
+     * @return true, if successfully created, otherwise false
+     */
     public boolean createUserWithDetails(User user) {
         try {
             userRepository.save(user);
@@ -28,6 +40,12 @@ public class UserCrudService {
         }
     }
 
+    /**
+     * Retrieves data of a User using provided id.
+     *
+     * @param  id - id of the User to be retrieved
+     * @return retrieved User entity
+     */
     public User getUserDetails(Long id) {
         User user = userRepository.getById(id);
         if(user == null) {
@@ -38,6 +56,12 @@ public class UserCrudService {
         return user;
     }
 
+    /**
+     * Retrieves User entity data using provided username.
+     *
+     * @param  userName - username of the User to be retrieved
+     * @return retrieved User entity
+     */
     public User getUserDetails(String userName) {
         User user = userRepository.getByUserName(userName);
         if(user == null) {
@@ -48,6 +72,12 @@ public class UserCrudService {
         return user;
     }
 
+    /**
+     * Edits the userName, firstName and lastName of an existing user.
+     *
+     * @param user - User entity containing id of user to be updated,
+     *             along with other data to be overwritten on existing user
+     */
     public void updateUserById(User user) {
         try {
             User updatedUser = userRepository.getById(user.getId());
@@ -66,6 +96,12 @@ public class UserCrudService {
         }
     }
 
+    /**
+     * Deletes a user of matching id.
+     *
+     * @param id - id of the user to be deleted
+     * @return true, if user is deleted. Otherwise, false
+     */
     public boolean deleteUser(Long id) {
         try {
             userRepository.deleteById(id);
@@ -80,6 +116,12 @@ public class UserCrudService {
         }
     }
 
+    /**
+     * Deletes a user of matching userName.
+     *
+     * @param userName - username of the user to be deleted
+     * @return true, if user is deleted. Otherwise, false
+     */
     public boolean deleteUser(String userName) {
         try {
             User user = getUserDetails(userName);

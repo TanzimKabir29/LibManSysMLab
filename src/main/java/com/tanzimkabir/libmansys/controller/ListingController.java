@@ -1,8 +1,6 @@
 package com.tanzimkabir.libmansys.controller;
 
-import com.tanzimkabir.libmansys.model.Book;
 import com.tanzimkabir.libmansys.model.BookListEntry;
-import com.tanzimkabir.libmansys.model.User;
 import com.tanzimkabir.libmansys.model.UserListEntry;
 import com.tanzimkabir.libmansys.service.ListingService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+
+/**
+ * This class contains endpoints for listing out Books issued to a specific User, or Users who have been issued a specific Book.
+ *
+ * @author tanzim
+ */
 
 @Slf4j
 @RestController

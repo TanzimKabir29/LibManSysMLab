@@ -10,6 +10,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * This class contains endpoints for issuing Books to Users and for Users submitting Books.
+ *
+ * @author tanzim
+ */
+
 @Slf4j
 @RestController
 @RequestMapping(value = "/transaction")

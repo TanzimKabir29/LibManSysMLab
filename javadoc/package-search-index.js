@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.tanzimkabir.libmansys"},{"l":"com.tanzimkabir.libmansys.controller"},{"l":"com.tanzimkabir.libmansys.exception"},{"l":"com.tanzimkabir.libmansys.model"},{"l":"com.tanzimkabir.libmansys.repository"},{"l":"com.tanzimkabir.libmansys.service"}]

@@ -8,6 +8,12 @@ import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
+/**
+ * Simple model for handling errors manually.
+ *
+ * @author tanzim
+ */
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

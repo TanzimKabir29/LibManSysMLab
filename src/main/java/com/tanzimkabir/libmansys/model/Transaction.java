@@ -4,11 +4,16 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.tomcat.jni.Local;
-import org.springframework.stereotype.Repository;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+
+/**
+ * Entity handles issuance and return of books. Each transaction has a unique User and Book entity
+ * mapped to it, along with the number of books.
+ *
+ * @author tanzim
+ */
 
 @Entity
 @Data

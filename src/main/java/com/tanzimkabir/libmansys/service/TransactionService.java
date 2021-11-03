@@ -11,7 +11,14 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.util.HashMap;
+
+/**
+ * Handles transactional operations (issue,submit) of Books and Users
+ *
+ * @author tanzim
+ */
 
 @Slf4j
 @Service
@@ -26,8 +33,22 @@ public class TransactionService {
     @Value("${user.book.limit}")
     private byte USER_BOOK_LIMIT;
 
+    /**
+     * Carries out a transaction to issue a book to a user
+     * If any data update is failed, all changes are rolled back
+     *
+     * @param  transactionRequest - a transactionRequest with necessary data
+     * @return true, if successfully executed. Otherwise, false
+     */
     @Transactional(rollbackOn = Exception.class)
     public boolean issueBook(TransactionRequest transactionRequest) {
+        // Validate if transactionRequest contains all necessary data
+        try{
+            validateTransactionRequest(transactionRequest);
+        } catch (Exception e){
+            log.error("Invalid data.");
+            throw new IllegalArgumentException("Invalid transaction request");
+        }
         // Get the user to whom book will be issued
         User user = userRepository.getByUserName(transactionRequest.getUserName());
         if (user == null) {
@@ -64,6 +85,7 @@ public class TransactionService {
             if(newUserList == null){
                 newUserList = new HashMap<>();
             }
+            // Update users who have been assigned the book and their count
             newUserList.put(user.getId(), transactionRequest.getCopies() + newUserList.getOrDefault(user.getId(), 0));
             book.setUserList(newUserList);
             bookRepository.save(book);
@@ -73,6 +95,7 @@ public class TransactionService {
             if(newBooksList == null){
                 newBooksList = new HashMap<>();
             }
+            // Update books which have been assigned to the user and their count
             newBooksList.put(book.getId(), transactionRequest.getCopies() + newBooksList.getOrDefault(book.getId(),0));
             user.setBooksList(newBooksList);
             userRepository.save(user);
@@ -85,25 +108,39 @@ public class TransactionService {
         }
     }
 
+    /**
+     * Carries out a transaction to submit a book by user
+     * If any data update is failed, all changes are rolled back
+     *
+     * @param  transactionRequest - a transactionRequest with necessary data
+     * @return true, if successfully executed. Otherwise, false
+     */
     @Transactional(rollbackOn = Exception.class)
     public boolean submitBook(TransactionRequest transactionRequest) {
-        // Get the user to whom book will be issued
+        // Validate if transactionRequest contains all necessary data
+        try{
+            validateTransactionRequest(transactionRequest);
+        } catch (Exception e){
+            log.error("Invalid data.");
+            throw new IllegalArgumentException("Invalid transaction request");
+        }
+        // Get the user who will submit book
         User user = userRepository.getByUserName(transactionRequest.getUserName());
         if (user == null) {
             log.info("No User found with username: {}", transactionRequest.getUserName());
             throw new EntityNotFoundException("Could not find user of username " + transactionRequest.getUserName());
         }
-        // Get book to be issued
+        // Get book to be submitted
         Book book = bookRepository.getByNameAndAuthor(transactionRequest.getBookName(), transactionRequest.getBookAuthor());
         if (book == null) {
             log.info("No Book found with name: {} and author: {}", transactionRequest.getBookName(), transactionRequest.getBookAuthor());
             throw new EntityNotFoundException("No Book found with Name: " + transactionRequest.getBookName() + " and author: " + transactionRequest.getBookAuthor());
         }
-        // Check if user has enough copies of particular book
         HashMap<Long, Integer> newBooksList = user.getBooksList();
         if(newBooksList == null){
             newBooksList = new HashMap<>();
         }
+        // Check if user has enough copies of particular book
         if (transactionRequest.getCopies() > newBooksList.getOrDefault(book.getId(),0)) {
             log.info("User cannot submit books. Number of submitted books exceeds issued: {}", USER_BOOK_LIMIT);
             return false;
@@ -122,11 +159,13 @@ public class TransactionService {
             if(newUserList == null){
                 newUserList = new HashMap<>();
             }
+            // Update users who have been assigned the book and their count
             newUserList.put(user.getId(), transactionRequest.getCopies() - newUserList.getOrDefault(user.getId(), 0));
             book.setUserList(newUserList);
             bookRepository.save(book);
             // Reduce number of books of user
             user.setBookCount(user.getBookCount() - transactionRequest.getCopies());
+            // Update books which have been assigned to the user and their count
             newBooksList.put(book.getId(), transactionRequest.getCopies() - newBooksList.getOrDefault(book.getId(),0));
             userRepository.save(user);
             log.info("Book Id:{} submitted by User Id:{}, amount:{}", book.getId(), user.getId(), transactionRequest.getCopies());
@@ -137,4 +176,12 @@ public class TransactionService {
             return false;
         }
     }
+
+    /**
+     * This method is separately defined only to check the Validity of TransactionRequest
+     * parameter. Allows custom handling of a Bad Request.
+     *
+     * @param  transactionRequest - a transactionRequest to validate
+     */
+    private void validateTransactionRequest(@Valid TransactionRequest transactionRequest){}
 }
