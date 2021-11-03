@@ -19,8 +19,16 @@ public class BookCrudService {
 
     public boolean createBookWithDetails(Book book) {
         try {
-            bookRepository.save(book);
-            log.info("New Book created!");
+            Book newBook = bookRepository.getByNameAndAuthor(book.getName(), book.getAuthor());
+            if(newBook == null){
+                bookRepository.save(book);
+                log.info("New Book created!");
+            }
+            else{
+                newBook.setCopies(newBook.getCopies() + book.getCopies());
+                bookRepository.save(newBook);
+                log.info("Copies added to existing book.");
+            }
             return true;
         } catch (Exception e) {
             log.error("Book could not be created with data {}", book);
