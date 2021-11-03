@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.HashMap;
 
@@ -31,7 +32,7 @@ public class TransactionService {
         User user = userRepository.getByUserName(transactionRequest.getUserName());
         if (user == null) {
             log.info("No User found with username: {}", transactionRequest.getUserName());
-            return false;
+            throw new EntityNotFoundException("Could not find user of username " + transactionRequest.getUserName());
         }
         // Check if user's book count will exceed limit or not
         if (user.getBookCount() + transactionRequest.getCopies() > USER_BOOK_LIMIT) {
@@ -42,7 +43,7 @@ public class TransactionService {
         Book book = bookRepository.getByNameAndAuthor(transactionRequest.getBookName(), transactionRequest.getBookAuthor());
         if (book == null) {
             log.info("No Book found with name: {} and author: {}", transactionRequest.getBookName(), transactionRequest.getBookAuthor());
-            return false;
+            throw new EntityNotFoundException("No Book found with Name: " + transactionRequest.getBookName() + " and author: " + transactionRequest.getBookAuthor());
         }
         // Check if there are enough copies of the book to issue
         if (book.getCopies() < transactionRequest.getCopies()) {
@@ -90,13 +91,13 @@ public class TransactionService {
         User user = userRepository.getByUserName(transactionRequest.getUserName());
         if (user == null) {
             log.info("No User found with username: {}", transactionRequest.getUserName());
-            return false;
+            throw new EntityNotFoundException("Could not find user of username " + transactionRequest.getUserName());
         }
         // Get book to be issued
         Book book = bookRepository.getByNameAndAuthor(transactionRequest.getBookName(), transactionRequest.getBookAuthor());
         if (book == null) {
             log.info("No Book found with name: {} and author: {}", transactionRequest.getBookName(), transactionRequest.getBookAuthor());
-            return false;
+            throw new EntityNotFoundException("No Book found with Name: " + transactionRequest.getBookName() + " and author: " + transactionRequest.getBookAuthor());
         }
         // Check if user has enough copies of particular book
         HashMap<Long, Integer> newBooksList = user.getBooksList();

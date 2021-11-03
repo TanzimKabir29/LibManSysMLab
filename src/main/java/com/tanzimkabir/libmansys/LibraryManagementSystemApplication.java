@@ -12,10 +12,4 @@ public class LibraryManagementSystemApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(LibraryManagementSystemApplication.class, args);
 	}
-
-	@Bean
-	public Gson gson() {
-		return new GsonBuilder()
-				.setDateFormat("dd-MM-yyyy'T'HH:mm:ssa").create();
-	}
 }

@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -58,6 +59,10 @@ public class ListingService {
                             .build()
             );
         }
+        if(bookList.isEmpty()){
+            log.info("No books found for user.");
+            throw new EntityNotFoundException("No books found for user: "+ user);
+        }
         log.info("Generated booklist: {}", bookList);
         return bookList;
     }
@@ -99,7 +104,11 @@ public class ListingService {
                             .build()
             );
         }
-        log.info("Generated booklist: {}", userList);
+        if(userList.isEmpty()){
+            log.info("No users found for book.");
+            throw new EntityNotFoundException("No users found for book: "+ book);
+        }
+        log.info("Generated userList: {}", userList);
         return userList;
     }
 }

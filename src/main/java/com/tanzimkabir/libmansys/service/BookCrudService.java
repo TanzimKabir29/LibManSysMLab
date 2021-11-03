@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -38,18 +39,30 @@ public class BookCrudService {
 
     public Book getBookDetails(Long id) {
         Book book = bookRepository.getById(id);
+        if(book == null) {
+            log.error("Could not find book of Id:{}",id);
+            throw new EntityNotFoundException("Could not find book of Id " + id);
+        }
         log.info("Found Book by Id: {}", book);
         return book;
     }
 
     public ArrayList<Book> getBookDetails(String name) {
         ArrayList<Book> books = bookRepository.getByName(name);
+        if(books.isEmpty()) {
+            log.error("Could not find books of name:{}",name);
+            throw new EntityNotFoundException("Could not find books of name " + name);
+        }
         log.info("Found Book by name: {}", books);
         return books;
     }
 
     public Book getBookDetails(String name, String author) {
         Book book = bookRepository.getByNameAndAuthor(name, author);
+        if(book == null) {
+            log.error("Could not find book of name:{} and author:{}", name,author);
+            throw new EntityNotFoundException("Could not find book of Name " + name + " and Author " + author);
+        }
         log.info("Found Book by name and author: {}", book);
         return book;
     }
@@ -57,6 +70,10 @@ public class BookCrudService {
     public void updateBookById(Book book) {
         try{
             Book updatedBook = bookRepository.getById(book.getId());
+            if(updatedBook == null) {
+                log.error("Could not find book of Id:{}",book.getId());
+                throw new EntityNotFoundException("Could not find book of Id " + book.getId());
+            }
             updatedBook.setName(book.getName());
             updatedBook.setAuthor(book.getAuthor());
             updatedBook.setCopies(book.getCopies());
@@ -76,7 +93,7 @@ public class BookCrudService {
             return true;
         } catch (EmptyResultDataAccessException noData) {
             log.info("Data with id {} not found.", id);
-            return false;
+            throw new EntityNotFoundException("Could not find book of Id " + id);
         } catch (Exception e) {
             log.info("Data could not be deleted.");
             return false;
@@ -91,7 +108,7 @@ public class BookCrudService {
             return true;
         } catch (EmptyResultDataAccessException noData) {
             log.info("Data with name {} and author {} not found.", name, author);
-            return false;
+            throw new EntityNotFoundException("Could not find book of Name " + name + " and Author " + author);
         } catch (Exception e) {
             log.error("Data could not be deleted.");
             return false;

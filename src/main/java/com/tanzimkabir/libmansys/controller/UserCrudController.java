@@ -10,6 +10,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
+
 @Slf4j
 @RestController
 @RequestMapping(value = "/user")
@@ -34,10 +36,11 @@ public class UserCrudController {
         try {
             User user = userCrudService.getUserDetails(id);
             log.info("Retrieved user : {}", user);
-            if (user != null)
-                return ResponseEntity.ok(user);
-            else
-                return new ResponseEntity(HttpStatus.NO_CONTENT);
+            return ResponseEntity.ok(user);
+        } catch (EntityNotFoundException enf){
+            throw new EntityNotFoundException(enf.getMessage());
+        } catch (IllegalArgumentException arg){
+            throw new EntityNotFoundException(arg.getMessage());
         } catch (Exception e) {
             log.error("Could not retrieve user");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -50,10 +53,11 @@ public class UserCrudController {
         try {
             User user = userCrudService.getUserDetails(userName);
             log.info("Retrieved user : {}", user);
-            if (user != null)
-                return ResponseEntity.ok(user);
-            else
-                return new ResponseEntity(HttpStatus.NO_CONTENT);
+            return ResponseEntity.ok(user);
+        } catch (EntityNotFoundException enf){
+            throw new EntityNotFoundException(enf.getMessage());
+        } catch (IllegalArgumentException arg){
+            throw new EntityNotFoundException(arg.getMessage());
         } catch (Exception e) {
             log.error("Could not retrieve user");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -66,6 +70,10 @@ public class UserCrudController {
         try {
             userCrudService.updateUserById(user);
             return new ResponseEntity(HttpStatus.CREATED);
+        } catch (EntityNotFoundException enf){
+            throw new EntityNotFoundException(enf.getMessage());
+        } catch (IllegalArgumentException arg){
+            throw new EntityNotFoundException(arg.getMessage());
         } catch (Exception e) {
             log.error("User could not be created.");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -78,6 +86,10 @@ public class UserCrudController {
         try {
             userCrudService.deleteUser(id);
             return new ResponseEntity(HttpStatus.OK);
+        } catch (EntityNotFoundException enf){
+            throw new EntityNotFoundException(enf.getMessage());
+        } catch (IllegalArgumentException arg){
+            throw new EntityNotFoundException(arg.getMessage());
         } catch (Exception e) {
             log.error("User could not be deleted.");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -90,6 +102,10 @@ public class UserCrudController {
         try {
             userCrudService.deleteUser(userName);
             return new ResponseEntity(HttpStatus.OK);
+        } catch (EntityNotFoundException enf){
+            throw new EntityNotFoundException(enf.getMessage());
+        } catch (IllegalArgumentException arg){
+            throw new EntityNotFoundException(arg.getMessage());
         } catch (Exception e) {
             log.error("User could not be deleted.");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);

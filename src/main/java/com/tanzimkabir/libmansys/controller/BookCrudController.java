@@ -36,10 +36,7 @@ public class BookCrudController {
         try {
             Book Book = bookCrudService.getBookDetails(id);
             log.info("Retrieved Book : {}", Book);
-            if (Book != null)
-                return ResponseEntity.ok(Book);
-            else
-                return new ResponseEntity(HttpStatus.NO_CONTENT);
+            return ResponseEntity.ok(Book);
         } catch (Exception e) {
             log.error("Could not retrieve Book");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -52,10 +49,7 @@ public class BookCrudController {
         try {
             ArrayList<Book> book = bookCrudService.getBookDetails(name);
             log.info("Retrieved Book : {}", book);
-            if (!book.isEmpty())
-                return ResponseEntity.ok(book);
-            else
-                return new ResponseEntity(HttpStatus.NO_CONTENT);
+            return ResponseEntity.ok(book);
         } catch (Exception e) {
             log.error("Could not retrieve Book");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -68,10 +62,7 @@ public class BookCrudController {
         try {
             Book book = bookCrudService.getBookDetails(name, author);
             log.info("Retrieved Book : {}", book);
-            if (book != null)
-                return ResponseEntity.ok(book);
-            else
-                return new ResponseEntity(HttpStatus.NO_CONTENT);
+            return ResponseEntity.ok(book);
         } catch (Exception e) {
             log.error("Could not retrieve Book");
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
